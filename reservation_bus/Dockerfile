@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Étape 4 : Construire le projet avec Maven Wrapper
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Étape 5 : Image finale plus légère
 FROM eclipse-temurin:21-jdk
