@@ -1,16 +1,15 @@
-# Étape 1 : Image de base avec Java 21
-FROM eclipse-temurin:21-jdk AS build
+# Étape 1 : Build avec Maven
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
-# Étape 2 : Répertoire de travail
 WORKDIR /app
 
-# Étape 3 : Copier tout le projet
+# Copier tout le projet
 COPY . .
 
-# Étape 4 : Construire le projet avec Maven Wrapper
+# Compiler le projet Spring Boot
 RUN mvn clean package -DskipTests
 
-# Étape 5 : Image finale plus légère
+# Étape 2 : Image finale avec seulement Java
 FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
@@ -21,5 +20,5 @@ COPY --from=build /app/target/*.jar app.jar
 # Exposer le port (Render utilise PORT)
 EXPOSE 8080
 
-# Commande de démarrage
+# Lancer l'application
 CMD ["java", "-jar", "app.jar"]
