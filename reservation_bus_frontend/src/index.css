@@ -15,6 +15,19 @@
 }
 
 * { box-sizing: border-box; }
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 body {
   margin: 0;
@@ -27,13 +40,13 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .container {
-  max-width: 1080px;
+  width: min(1100px, 94%);
   margin: 0 auto;
-  padding: 0 20px;
-  width: 100%;
+  padding: 0 15px;
 }
 
 /* ---------- Navbar ---------- */
@@ -265,7 +278,84 @@ body {
 
 .section { padding: 32px 0; }
 
-@media (max-width: 600px) {
-  .navbar-links a { padding: 8px 10px; font-size: 13px; }
-  .page-title { font-size: 22px; }
+@media (max-width: 768px) {
+
+  .container{
+      width:95%;
+      padding:0 10px;
+  }
+
+  .section{
+      padding:20px 0;
+  }
+
+  .navbar-inner{
+      flex-direction:column;
+      gap:12px;
+  }
+
+  .navbar-links{
+      width:100%;
+      justify-content:center;
+      flex-wrap:wrap;
+  }
+
+  .page-title{
+      font-size:22px;
+      text-align:center;
+  }
+
+  .page-subtitle{
+      text-align:center;
+      font-size:14px;
+  }
+
+  .grid-cards{
+      grid-template-columns:1fr;
+  }
+
+  .card{
+      padding:16px;
+  }
+
+  .ticket{
+      width:100%;
+  }
+
+  .ticket-header{
+      flex-direction:column;
+      gap:10px;
+      text-align:center;
+  }
+
+  .ticket-row{
+      flex-direction:column;
+      gap:4px;
+      align-items:flex-start;
+  }
+
+  .btn{
+      width:100%;
+  }
+
+  .btn-sm{
+      width:auto;
+  }
+
+}
+
+img{
+    max-width:100%;
+    height:auto;
+}
+
+table{
+    width:100%;
+}
+
+input,
+select,
+textarea,
+button{
+    font-size:16px;
 }

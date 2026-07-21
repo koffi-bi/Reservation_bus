@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Reservation Bus</string>
+    <string name="title_activity_main">Reservation Bus</string>
+    <string name="package_name">com.yohbi.reservationbus</string>
+    <string name="custom_url_scheme">com.yohbi.reservationbus</string>
+</resources>

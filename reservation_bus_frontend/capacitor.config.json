@@ -1,0 +1,8 @@
+{
+  "appId": "com.yohbi.reservationbus",
+  "appName": "Reservation Bus",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true
+  }
+}
