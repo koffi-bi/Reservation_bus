@@ -1,0 +1,293 @@
+1. Erreurs de compilation Spring Boot
+Erreur
+
+Au début du projet, plusieurs erreurs de compilation apparaissaient :
+
+cannot find symbol
+Table
+Column
+LocalDate
+LocalTime
+Cause
+
+Les imports Jakarta Persistence et Java Time étaient manquants.
+
+Solution
+
+Importer les bonnes classes :
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+2. Conflit entre Entity et Repository
+Erreur
+
+Le Repository portait le même nom que l'entité (Trip).
+
+Cause
+
+Java ne peut pas avoir une classe Entity et une interface Repository ayant exactement le même nom dans le même package.
+
+Solution
+
+Créer :
+
+Trip.java
+
+et
+
+TripRepository.java
+3. Base PostgreSQL non connectée
+Erreur
+
+Spring Boot ne démarrait pas.
+
+Les logs indiquaient :
+
+JDBC URL invalid port number: ${PGPORT}
+
+puis
+
+Unable to determine Dialect
+Cause
+
+Les variables Railway :
+
+PGHOST
+PGPORT
+PGDATABASE
+PGUSER
+PGPASSWORD
+
+n'étaient pas transmises au service Spring Boot.
+
+La datasource devenait :
+
+jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+
+au lieu d'être remplacée par les vraies valeurs.
+
+Solution
+
+Créer les Variable References dans Railway entre :
+
+PostgreSQL
+Spring Boot
+
+Après cela :
+
+PGHOST
+PGPORT
+PGDATABASE
+PGUSER
+PGPASSWORD
+
+étaient correctement injectées.
+
+4. Hibernate ne trouvait pas PostgreSQL
+Erreur
+Unable to determine Dialect
+Cause
+
+Ce n'était pas Hibernate le problème.
+
+Hibernate ne pouvait simplement pas se connecter à PostgreSQL.
+
+Solution
+
+Résoudre le problème précédent.
+
+Une fois la connexion établie, Hibernate a automatiquement détecté :
+
+PostgreSQLDialect
+5. Les tables n'existaient pas
+Erreur
+
+Au premier démarrage, aucune table.
+
+Cause
+
+Base vide.
+
+Solution
+
+Grâce à :
+
+ddl-auto: update
+
+Hibernate a créé :
+
+client
+
+trip
+
+ticket
+
+reservation
+
+automatiquement.
+
+6. Les contraintes "does not exist"
+Erreur
+
+Logs :
+
+constraint ... does not exist
+Cause
+
+Hibernate tente d'abord de supprimer une contrainte avant de la recréer.
+
+Comme la base était neuve, elle n'existait pas encore.
+
+Solution
+
+Aucune.
+
+C'est simplement un Warning.
+
+7. Railway renvoyait "Not Found"
+Erreur
+https://.../api/trips
+
+Not Found
+Cause
+
+L'URL Railway utilisée était mauvaise.
+
+Deux domaines existaient :
+
+Mauvais :
+
+https://busreservation1-production.railway.app
+
+Bon :
+
+https://busreservation1-production.up.railway.app
+Solution
+
+Utiliser le domaine donné par Railway :
+
+https://busreservation1-production.up.railway.app
+8. Le frontend pointait toujours vers localhost
+Erreur
+
+React essayait toujours d'appeler
+
+localhost:8080
+Cause
+
+Dans
+
+apiConfig.js
+
+on avait :
+
+const BASE_URL = "http://localhost:8080";
+Solution
+
+Utiliser
+
+.env
+
+avec
+
+VITE_API_URL=https://busreservation1-production.up.railway.app
+
+puis
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+9. Variable .env non prise en compte
+Erreur
+
+Même après modification du fichier .env, React continuait d'utiliser l'ancienne URL.
+
+Cause
+
+Vite lit les variables uniquement au moment du build.
+
+Solution
+
+Après chaque modification du .env :
+
+npm run build
+
+puis redéployer le dossier :
+
+dist
+10. Netlify renvoyait 404 sur les routes React
+Erreur
+
+En ouvrant :
+
+/trajets
+
+Netlify affichait
+
+404 Page not found
+Cause
+
+Application React utilisant React Router.
+
+Netlify cherchait un fichier :
+
+trajets.html
+
+qui n'existe pas.
+
+Solution
+
+Créer
+
+public/_redirects
+
+avec
+
+/*    /index.html   200
+11. Le backend répondait [] mais React affichait Failed to fetch
+Erreur
+Erreur de connexion au backend
+
+alors que
+
+https://.../api/trips
+
+renvoyait bien
+
+[]
+Cause
+
+Ce n'était pas un problème de base de données.
+
+Le navigateur bloquait la requête avant même de lire la réponse.
+
+12. Erreur CORS
+Erreur
+Access-Control-Allow-Origin
+
+valait
+
+https://railway.com
+
+au lieu de
+
+https://venerable-crisp-a49c05.netlify.app
+Cause
+
+Le navigateur refusait la requête car l'origine autorisée ne correspondait pas à celle du frontend.
+
+Solution envisagée
+
+Créer une configuration CORS :
+
+@Configuration
+public class CorsConfig {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        ...
+    }
+}
+
+Cependant, les logs laissaient penser que :
+
+soit Railway exécutait une ancienne version,
+soit une autre configuration CORS prenait le dessus.
